@@ -10,21 +10,12 @@ import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.backend.standalone.IAdapter;
 
-/**
- * Codename Adapter for codename version before FunkinModchart being added
- * This doesn't contain:
- * Hold parent time (used to rotate the hold around the parent note, for long/short holds, etc), (should i add it using a work around??)
- * Hold subdivision option
- */
+// TODO: make this work for v0.1.0 legacy (when the pr gets merged)
 class Codename implements IAdapter {
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		for (strumLine in PlayState.instance.strumLines.members) {
-			strumLine.forEach(strum -> {
-				strum.extra.set('player', strumLine.ID);
-			});
-		}
+		// do nothing
 	}
 
 	public function isTapNote(sprite:FlxSprite)
@@ -79,10 +70,10 @@ class Codename implements IAdapter {
 			return note.strumLine.ID;
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
-			return strum.extra.get('player');
+			return strum.strumLine.ID;
 		} else if (arrow is Splash) {
 			final splash:Splash = cast arrow;
-			return splash.strum.extra.get('player');
+			return splash.strum.strumLine.ID;
 		}
 
 		return 0;
@@ -174,7 +165,7 @@ class Codename implements IAdapter {
 		}
 
 		for (grp in PlayState.instance.splashHandler.grpMap)
-			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
+			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.strumLine.ID][3].push(spr));
 
 		return pspr;
 	}

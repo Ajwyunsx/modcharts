@@ -16,6 +16,9 @@ class Codename implements IAdapter {
 
 	public function onModchartingInitialization() {
 		// do nothing
+		#if (FM_ENGINE_VERSION == "1.0")
+		PlayState.instance.splashHandler.visible = false;
+		#end
 	}
 
 	public function isTapNote(sprite:FlxSprite)
@@ -86,7 +89,7 @@ class Codename implements IAdapter {
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
-		return note.strumTime;
+		return #if (FM_ENGINE_VERSION == "1.0") note.sustainParent.strumTime #else note.strumTime #end;
 	}
 
 	// im so fucking sorry for those conditionals
@@ -110,8 +113,12 @@ class Codename implements IAdapter {
 	}
 
 	public function getHoldSubdivisions(hold:FlxSprite):Int {
+		#if (FM_ENGINE_VERSION == "1.0")
 		final val = Options.modchartingHoldSubdivisions;
 		return val < 1 ? 1 : val;
+		#else
+		return 4;
+		#end
 	}
 
 	public function getDownscroll():Bool
@@ -164,8 +171,10 @@ class Codename implements IAdapter {
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
 
+		#if (FM_ENGINE_VERSION == "1.0")
 		for (grp in PlayState.instance.splashHandler.grpMap)
 			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.strumLine.ID][3].push(spr));
+		#end
 
 		return pspr;
 	}
